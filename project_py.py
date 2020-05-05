@@ -14,10 +14,10 @@ class atrr:
     self.name = name
     self.value = value
 
-    
-attr_values = []
 
-def Get_atrr_Value(value_list):
+def Get_atrr_Value():
+    #Each attribute with multi values
+    attr_values = [] 
     count = 0 
     num = 0
     for i in range (8,20):
@@ -26,32 +26,85 @@ def Get_atrr_Value(value_list):
                 if x == num :
                     count = count + 1
             if count != 0 :
-                value_list.append((atrr(i ,num) , count ))
+                attr_values.append(atrr(i ,num))
                 count = 0
             num = num + 1 
         num =0 
-    return (count)            
-            
-            
+    return (attr_values)    
+
+def Calculate_Support(attr_values , level , min_support ):
+    check = True
+    listofList = []
+    temp_list = []
+    for i in range ( 0 , len(attr_values)):
+        #print(attr_values[i].name)
+        if level == 1:
+            temp_list.append(attr_values[i] )
+            check = calculate_min_Support(temp_list, level , min_support)
+        else :
+            check = calculate_min_Support(attr_values[i], level , min_support)
+        if check == True :
+            listofList.append(attr_values[i])
+    return (listofList)         
         
+        
+                
+def calculate_min_Support(obj_list , level ,min_support):
+    row = 0 
+    check = True
+    count = 0 
+    for i in range (0,20):
+        check = True
+        if Data[obj_list[0].name][i] == obj_list[0].value:
+            row = i 
+            if level != 1:
+                for j in range (1 , level) :
+                    if Data[obj_list[j].name][row] != obj_list[j].value:
+                        check = False
+                if check == True :
+                    count = count + 1
+            else:
+                count = count + 1
+    support = count / 1##########
+    if support >= min_support :
+        return(True)  
+    else : 
+        return(False)
+    
+  
+        
+            
+       ##################################################3
+       
+attr_values = []
+attr_values = Get_atrr_Value()
 
-print(Get_atrr_Value(attr_values))
+#for obj in attr_values: 
+ #   print( obj.name, obj.value, sep =' ' ) 
 
-for obj in attr_values: 
-    print( obj[0].name, obj[0].value,obj[1] ,  sep =' ' ) 
+obj_list = []
+
+obj_list.append(atrr(8 ,4))
+
+listOfListsOfAtt = []
+
+sublist = []
+sublist.append(atrr(6 ,4))
+sublist.append(atrr(7 ,1))
+sublist.append(atrr(8 ,4))    
+listOfListsOfAtt.append(sublist)
+sublist2 = []
+sublist2.append(atrr(6 ,5))
+sublist2.append(atrr(7 ,0))
+sublist2.append(atrr(8 ,4))    
+listOfListsOfAtt.append(sublist2)
+    
+
+listofList = Calculate_Support (listOfListsOfAtt , 3 , 3 )
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+for obj in listofList:
+    for i in range (0,3):
+        print( obj[i].name, obj[i].value, sep =' ' ) 
+   
+#print(calculate_min_Support(sublist , 2 , 5))
