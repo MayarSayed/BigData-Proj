@@ -72,7 +72,28 @@ def calculate_min_Support(obj_list , level ,min_support):
         return(False)
     
   
-        
+def item_Set(listOflist , level):
+    new_listOflist = []
+    check = True
+    for i in range (0, len(listOflist)-1):
+        for k in range (i+1, len(listOflist)):
+            for j in range (0,level):
+                check = True
+                sub_list = []
+                for l in range (0,level):    
+                    sub_list.append(listOflist[i][l])   
+                for x in sub_list:
+                    if ((x.name == listOflist[k][j].name) 
+                    and(x.value == listOflist[k][j].value) ):
+                        check =False
+                if check == True :
+                    sub_list.append(listOflist[k][j])
+                    new_listOflist.append(sub_list)
+                    
+                
+                        
+    return(new_listOflist)                    
+                
             
        ##################################################3
        
@@ -90,21 +111,35 @@ listOfListsOfAtt = []
 
 sublist = []
 sublist.append(atrr(6 ,4))
-sublist.append(atrr(7 ,1))
-sublist.append(atrr(8 ,4))    
+sublist.append(atrr(7 ,1)) 
 listOfListsOfAtt.append(sublist)
 sublist2 = []
 sublist2.append(atrr(6 ,5))
-sublist2.append(atrr(7 ,0))
 sublist2.append(atrr(8 ,4))    
 listOfListsOfAtt.append(sublist2)
-    
+sublist3 = []
+sublist3.append(atrr(8 ,4))
+sublist3.append(atrr(7 ,0))
+listOfListsOfAtt.append(sublist3)
 
-listofList = Calculate_Support (listOfListsOfAtt , 3 , 3 )
+
+
+listofList = Calculate_Support (listOfListsOfAtt , 2 , 0 )
+new_listofList = []
+new_listofList = item_Set(listofList , 2 )
 
 
 for obj in listofList:
+    for i in range (0,2):
+        print( obj[i].name, obj[i].value, sep =' ' ) 
+
+print(",,,,,,,,")
+print(len(new_listofList))
+
+for obj in new_listofList:
     for i in range (0,3):
         print( obj[i].name, obj[i].value, sep =' ' ) 
-   
+    
+    
+    
 #print(calculate_min_Support(sublist , 2 , 5))
