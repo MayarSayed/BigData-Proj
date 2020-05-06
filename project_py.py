@@ -6,7 +6,7 @@ Created on Mon May  4 09:20:16 2020
 """
 import pandas as pd
 
-Data = pd.read_excel (r'C:/Users/Sara/Downloads/bigData/Data.xlsx' , header= None )
+Data = pd.read_excel (r'E:/Mayar kolya/GitHub repos/BigData-Proj/data.xlsx' , header= None )
 #print (Data[8])
 
 class atrr:
@@ -75,20 +75,47 @@ def calculate_min_Support(obj_list , level ,min_support):
 def item_Set(listOflist , level):
     new_listOflist = []
     check = True
+    Exist = False
+    #i : counter for first list
     for i in range (0, len(listOflist)-1):
+        #k: counter for sec list
         for k in range (i+1, len(listOflist)):
-            for j in range (0,level):
-                check = True
-                sub_list = []
-                for l in range (0,level):    
-                    sub_list.append(listOflist[i][l])   
-                for x in sub_list:
-                    if ((x.name == listOflist[k][j].name) 
-                    and(x.value == listOflist[k][j].value) ):
-                        check =False
-                if check == True :
-                    sub_list.append(listOflist[k][j])
-                    new_listOflist.append(sub_list)
+            if level == 1:
+                sub_list2 = []
+                sub_list2.append(listOflist[i])
+                sub_list2.append(listOflist[k])
+                new_listOflist.append(sub_list2)
+                
+            else: 
+                #j: counter for obj in sec list
+                for j in range (0,level):
+                    check = True
+                    Exist = False
+                    sub_list = []
+                    #l: counter for obj in first list
+                    for l in range (0,level):    
+                        sub_list.append(listOflist[i][l])
+                    #check if obj is already in sublist    
+                    for x in sub_list:
+                        if ((x.name == listOflist[k][j].name) 
+                        and(x.value == listOflist[k][j].value) ):
+                            check =False
+                    if check == True :
+                        sub_list.append(listOflist[k][j])
+                        #check if sublist already in new_listOflist
+                        for m in range(0,len(new_listOflist)):
+                            count =0
+                            #n: counter for obj in sublist
+                            for n in sub_list:
+                                #p: counter for obj in new_listOflist
+                                for p in new_listOflist[m]:
+                                    if ((n.name == p.name) and(n.value == p.value)):
+                                        #print('heeeeeereeee')
+                                        count = count +1
+                            if count == level+1:
+                                Exist = True
+                        if Exist == False:
+                            new_listOflist.append(sub_list)
                     
                 
                         
@@ -121,6 +148,10 @@ sublist3 = []
 sublist3.append(atrr(8 ,4))
 sublist3.append(atrr(7 ,0))
 listOfListsOfAtt.append(sublist3)
+sublist4 = []
+sublist4.append(atrr(6 ,5))
+sublist4.append(atrr(7 ,0))
+listOfListsOfAtt.append(sublist4)
 
 
 
@@ -137,6 +168,7 @@ print(",,,,,,,,")
 print(len(new_listofList))
 
 for obj in new_listofList:
+    print("****")
     for i in range (0,3):
         print( obj[i].name, obj[i].value, sep =' ' ) 
     
