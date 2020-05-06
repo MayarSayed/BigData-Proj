@@ -20,7 +20,7 @@ def Get_atrr_Value():
     attr_values = [] 
     count = 0 
     num = 0
-    for i in range (8,20):
+    for i in range (9,12):
         while num < 45 :    
             for x in Data[i]:
                 if x == num :
@@ -37,10 +37,12 @@ def Calculate_Support(attr_values , level , min_support ):
     listofList = []
     temp_list = []
     for i in range ( 0 , len(attr_values)):
+        
         #print(attr_values[i].name)
         if level == 1:
             temp_list.append(attr_values[i] )
             check = calculate_min_Support(temp_list, level , min_support)
+            temp_list.clear()
         else :
             check = calculate_min_Support(attr_values[i], level , min_support)
         if check == True :
@@ -76,6 +78,9 @@ def item_Set(listOflist , level):
     new_listOflist = []
     check = True
     Exist = False
+    
+    if len(listOflist) == 1:
+        return(listOflist,False)
     #i : counter for first list
     for i in range (0, len(listOflist)-1):
         #k: counter for sec list
@@ -119,17 +124,44 @@ def item_Set(listOflist , level):
                     
                 
                         
-    return(new_listOflist)                    
+    return(new_listOflist,True)                    
                 
-            
+
+def main_fn(att_list, min_support):
+    level_no = 1
+    new_list = []
+    old_list = []
+    add = True
+    while True:
+        #new list after removing min support
+       # print("****")
+        new_list = Calculate_Support(att_list , level_no , min_support )
+       # print(len(new_list))
+       # for obj in new_list:
+        #    print("****")
+            #for i in range (0,level_no):
+          #  print( obj.name, obj.value, sep =' ' ) 
+        if len(new_list) == 0:
+            return(old_list)
+        else:
+            old_list = new_list
+            att_list,add = item_Set(new_list , level_no)
+            if add == True:
+                level_no = level_no +1
+            else:
+                return(old_list)
+             
        ##################################################3
        
 attr_values = []
 attr_values = Get_atrr_Value()
-
-#for obj in attr_values: 
- #   print( obj.name, obj.value, sep =' ' ) 
-
+#new_list = Calculate_Support(attr_values , 1 , 2 )
+list4 = main_fn(attr_values, 2)
+print(len(list4))
+#for obj in list4: 
+  #  for i in range(0,5):
+   #     print( obj[i].name, obj[i].value, sep =' ' ) 
+'''
 obj_list = []
 
 obj_list.append(atrr(8 ,4))
@@ -137,8 +169,9 @@ obj_list.append(atrr(8 ,4))
 listOfListsOfAtt = []
 
 sublist = []
-sublist.append(atrr(6 ,4))
-sublist.append(atrr(7 ,1)) 
+sublist.append(atrr(9 ,0))
+sublist.append(atrr(9,1))
+sublist.append(atrr(9 ,2)) 
 listOfListsOfAtt.append(sublist)
 sublist2 = []
 sublist2.append(atrr(6 ,5))
@@ -155,23 +188,25 @@ listOfListsOfAtt.append(sublist4)
 
 
 
-listofList = Calculate_Support (listOfListsOfAtt , 2 , 0 )
-new_listofList = []
-new_listofList = item_Set(listofList , 2 )
+#listofList = Calculate_Support (sublist , 1 , 0 )
+#new_listofList = []
+#new_listofList = item_Set(listofList , 0)
 
 
 for obj in listofList:
-    for i in range (0,2):
-        print( obj[i].name, obj[i].value, sep =' ' ) 
+   # for i in range (0,2):
+   print( obj.name, obj.value, sep =' ' ) 
 
 print(",,,,,,,,")
-print(len(new_listofList))
 
-for obj in new_listofList:
-    print("****")
-    for i in range (0,3):
-        print( obj[i].name, obj[i].value, sep =' ' ) 
+#print(len(list4))
+
+#for obj in new_listofList:
+ #   print("****")
+  #  for i in range (0,3):
+   #     print( obj[i].name, obj[i].value, sep =' ' ) 
     
     
     
-#print(calculate_min_Support(sublist , 2 , 5))
+print(calculate_min_Support(sublist , 2 , 5))
+'''
