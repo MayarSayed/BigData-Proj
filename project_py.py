@@ -20,7 +20,7 @@ def Get_atrr_Value():
     attr_values = [] 
     count = 0 
     num = 0
-    for i in range (9,12):
+    for i in range (8,20):
         while num < 45 :    
             for x in Data[i]:
                 if x == num :
@@ -32,8 +32,7 @@ def Get_atrr_Value():
         num =0 
     return (attr_values)    
 
-def Calculate_Support(attr_values , level , min_support ):
-    check = True
+def Min_Support_list(attr_values , level , min_support ):
     listofList = []
     temp_list = []
     for i in range ( 0 , len(attr_values)):
@@ -41,21 +40,21 @@ def Calculate_Support(attr_values , level , min_support ):
         #print(attr_values[i].name)
         if level == 1:
             temp_list.append(attr_values[i] )
-            check = calculate_min_Support(temp_list, level , min_support)
+            support = calculate_Support(temp_list, level , min_support)
             temp_list.clear()
         else :
-            check = calculate_min_Support(attr_values[i], level , min_support)
-        if check == True :
+            support = calculate_Support(attr_values[i], level , min_support)
+        if support >= min_support :
             listofList.append(attr_values[i])
     return (listofList)         
         
         
                 
-def calculate_min_Support(obj_list , level ,min_support):
+def calculate_Support(obj_list , level ,min_support):
     row = 0 
     check = True
     count = 0 
-    for i in range (0,20):
+    for i in range (0,5822):
         check = True
         if Data[obj_list[0].name][i] == obj_list[0].value:
             row = i 
@@ -68,10 +67,8 @@ def calculate_min_Support(obj_list , level ,min_support):
             else:
                 count = count + 1
     support = count / 1##########
-    if support >= min_support :
-        return(True)  
-    else : 
-        return(False)
+   # if support >= min_support :
+    return(support)  
     
   
 def item_Set(listOflist , level):
@@ -135,7 +132,7 @@ def main_fn(att_list, min_support):
     while True:
         #new list after removing min support
        # print("****")
-        new_list = Calculate_Support(att_list , level_no , min_support )
+        new_list = Min_Support_list(att_list , level_no , min_support )
        # print(len(new_list))
        # for obj in new_list:
         #    print("****")
@@ -156,11 +153,11 @@ def main_fn(att_list, min_support):
 attr_values = []
 attr_values = Get_atrr_Value()
 #new_list = Calculate_Support(attr_values , 1 , 2 )
-list4 = main_fn(attr_values, 2)
+list4 = main_fn(attr_values, 10)
 print(len(list4))
-#for obj in list4: 
-  #  for i in range(0,5):
-   #     print( obj[i].name, obj[i].value, sep =' ' ) 
+for i in range(0,len(list4)): 
+   for l in range(0,len(list4[i])):
+        print( list4[i][l].name, list4[i][l].value, sep =' ' ) 
 '''
 obj_list = []
 
