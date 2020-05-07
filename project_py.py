@@ -54,7 +54,7 @@ def calculate_Support(obj_list , level ,min_support):
     row = 0 
     check = True
     count = 0 
-    for i in range (0,5822):
+    for i in range (0,200):
         check = True
         if Data[obj_list[0].name][i] == obj_list[0].value:
             row = i 
@@ -97,10 +97,9 @@ def item_Set(listOflist , level):
                     #l: counter for obj in first list
                     for l in range (0,level):    
                         sub_list.append(listOflist[i][l])
-                    #check if obj is already in sublist    
+                    #check if obj is already in sublist or in same col   
                     for x in sub_list:
-                        if ((x.name == listOflist[k][j].name) 
-                        and(x.value == listOflist[k][j].value) ):
+                        if (x.name == listOflist[k][j].name):
                             check =False
                     if check == True :
                         sub_list.append(listOflist[k][j])
@@ -153,7 +152,7 @@ def main_fn(att_list, min_support):
 attr_values = []
 attr_values = Get_atrr_Value()
 #new_list = Calculate_Support(attr_values , 1 , 2 )
-list4 = main_fn(attr_values, 10)
+list4 = main_fn(attr_values, 11)
 print(len(list4))
 for i in range(0,len(list4)): 
    for l in range(0,len(list4[i])):
