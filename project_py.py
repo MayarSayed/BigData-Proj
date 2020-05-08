@@ -18,34 +18,41 @@ class atrr:
 def Get_atrr_Value():
     #Each attribute with multi values
     attr_values = [] 
-    count = 0 
+#    count = 0 
     num = 0
     for i in range (8,20):
-        while num < 45 :    
+        while num < 10 :    
             for x in Data[i]:
                 if x == num :
-                    count = count + 1
-            if count != 0 :
-                attr_values.append(atrr(i ,num))
-                count = 0
+                    attr_values.append(atrr(i ,num))
+                    break
             num = num + 1 
         num =0 
     return (attr_values)    
 
 def Min_Support_list(attr_values , level , min_support ):
     listofList = []
-    temp_list = []
-    for i in range ( 0 , len(attr_values)):
+   # temp_list = []
+    if level == 1:
+        listofList = cal_Min_sup2(attr_values , level , min_support)
+       
+    else:
+        listofList = cal_Min_sup2(attr_values , level , min_support)
+        '''
+        for i in range ( 0 , len(attr_values)):
+            support = calculate_Support(attr_values[i], level , min_support)
+            if support >= min_support :
+                listofList.append(attr_values[i])
         
         #print(attr_values[i].name)
         if level == 1:
+            listofList = cal_Min_sup2(attr_values , level , min_support)
+            
             temp_list.append(attr_values[i] )
             support = calculate_Support(temp_list, level , min_support)
             temp_list.clear()
-        else :
-            support = calculate_Support(attr_values[i], level , min_support)
-        if support >= min_support :
-            listofList.append(attr_values[i])
+            '''
+           
     return (listofList)         
         
         
@@ -53,8 +60,10 @@ def Min_Support_list(attr_values , level , min_support ):
 def calculate_Support(obj_list , level ,min_support):
     row = 0 
     check = True
-    count = 0 
-    for i in range (0,200):
+    count = 0
+    
+    for i in range (0,100):
+        ##############
         check = True
         if Data[obj_list[0].name][i] == obj_list[0].value:
             row = i 
@@ -69,8 +78,30 @@ def calculate_Support(obj_list , level ,min_support):
     support = count / 1##########
    # if support >= min_support :
     return(support)  
-    
-  
+################################    
+def cal_Min_sup2(attr_values , level , min_support):
+    listofList = []
+    count_list = [0] * len(attr_values)
+    for i in range (0,5822):
+       # print('5ls row')
+        if level == 1:
+            for k in range(0,len(attr_values)):
+                if Data[attr_values[k].name][i] == attr_values[k].value:
+                    count_list[k] = count_list[k]+1
+        else:
+            for l in range(0,len(attr_values)):
+                count =0
+                for m in range(0,level):
+                    if Data[attr_values[l][m].name][i] ==attr_values[l][m].value:
+                        count = count +1
+                if count == level:
+                    #print(str(l)+ '  '+ str(count_list[l]))
+                    count_list[l]= count_list[l]+1
+    for n in range(0,len(count_list)):
+        if count_list[n] >= min_support:
+            listofList.append(attr_values[n])
+    return(listofList)
+##############################
 def item_Set(listOflist , level):
     new_listOflist = []
     check = True
@@ -143,6 +174,8 @@ def main_fn(att_list, min_support):
             old_list = new_list
             att_list,add = item_Set(new_list , level_no)
             if add == True:
+                print(level_no)
+                print('************************')
                 level_no = level_no +1
             else:
                 return(old_list)
@@ -152,7 +185,7 @@ def main_fn(att_list, min_support):
 attr_values = []
 attr_values = Get_atrr_Value()
 #new_list = Calculate_Support(attr_values , 1 , 2 )
-list4 = main_fn(attr_values, 11)
+list4 = main_fn(attr_values, 700)
 print(len(list4))
 for i in range(0,len(list4)): 
    for l in range(0,len(list4[i])):
