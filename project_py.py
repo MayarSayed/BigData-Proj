@@ -32,12 +32,13 @@ def Get_atrr_Value():
 
 def Min_Support_list(attr_values , level , min_support ):
     listofList = []
-   # temp_list = []
-    if level == 1:
-        listofList = cal_Min_sup2(attr_values , level , min_support)
+    count_list = []
+    
+    count_list = Calculate_Support(attr_values , level)
        
-    else:
-        listofList = cal_Min_sup2(attr_values , level , min_support)
+    for n in range(0,len(count_list)):
+        if (count_list[n]/5822) >= min_support:
+            listofList.append(attr_values[n])
         '''
         for i in range ( 0 , len(attr_values)):
             support = calculate_Support(attr_values[i], level , min_support)
@@ -55,9 +56,9 @@ def Min_Support_list(attr_values , level , min_support ):
            
     return (listofList)         
         
-        
+'''      
                 
-def calculate_Support(obj_list , level ,min_support):
+def calculate_Support_old(obj_list , level ,min_support):
     row = 0 
     check = True
     count = 0
@@ -78,9 +79,10 @@ def calculate_Support(obj_list , level ,min_support):
     support = count / 1##########
    # if support >= min_support :
     return(support)  
+'''
 ################################    
-def cal_Min_sup2(attr_values , level , min_support):
-    listofList = []
+def Calculate_Support(attr_values , level):
+   # listofList = []
     count_list = [0] * len(attr_values)
     for i in range (0,5822):
        # print('5ls row')
@@ -94,13 +96,17 @@ def cal_Min_sup2(attr_values , level , min_support):
                 for m in range(0,level):
                     if Data[attr_values[l][m].name][i] ==attr_values[l][m].value:
                         count = count +1
+                    else:
+                        break
                 if count == level:
                     #print(str(l)+ '  '+ str(count_list[l]))
                     count_list[l]= count_list[l]+1
+    '''
     for n in range(0,len(count_list)):
         if count_list[n] >= min_support:
             listofList.append(attr_values[n])
-    return(listofList)
+    '''
+    return(count_list)
 ##############################
 def item_Set(listOflist , level):
     new_listOflist = []
@@ -185,7 +191,7 @@ def main_fn(att_list, min_support):
 attr_values = []
 attr_values = Get_atrr_Value()
 #new_list = Calculate_Support(attr_values , 1 , 2 )
-list4 = main_fn(attr_values, 700)
+list4 = main_fn(attr_values, 0.1374)
 print(len(list4))
 for i in range(0,len(list4)): 
    for l in range(0,len(list4[i])):
