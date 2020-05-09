@@ -5,6 +5,7 @@ Created on Wed May  6 01:28:40 2020
 @author: Hadeel
 """
 import pandas as pd
+import numpy as np
 
 class atrr:
   def __init__(self, name, value):
@@ -25,18 +26,35 @@ Data = pd.read_excel ('data.xlsx' , header= None )
 def calculate_Support(obj_list , level ,min_support):
     return True 
 
-def Calculate_Confidence(ListOfListOfAttr):
+def Calculate_Confidence(ListOfListOfAttr, min_c):
     i = 0
     ListOfConfidence =[]
+    ListOf2attr = []
+    length = len(ListOfListOfAttr[0])
+    
     for List in ListOfListOfAttr:
-        length = len(List)
-        s1 = listofsupports[i] ###### For Test
-        #s1 = calculate_Support(List, length, min_s)
         sub = List[:-1]
-        s2 = 1000 ###### For Test
+        ListOf2attr.append(sub)
+    
+    
+    #Calculate Support of rules
+    #ListOfall_s = [ 800, 600, 400, 650,350 ]    #For Test
+    #ListOfsub_s = [1000, 1000, 1000, 1000, 1000] #For Test
+    ListOfall_s = calculate_Support(ListOfListOfAttr, length)
+    ListOfsub_s = calculate_Support(ListOf2attr, length-1)
+    s1List = np.array(ListOfall_s)
+    s2List = np.array(ListOfsub_s)
+    all_conf = s1List/s2List
+    
+    for List in ListOfListOfAttr:
+        #s1 = listofsupports[i] ###### For Test
+        #s1 = calculate_Support(List, length, min_s)
+        #sub = List[:-1]
+        #s2 = 1000 ###### For Test
         #s2 = calculate_Support(sub, length-1, min_s)
-        c = itemsets_confidence(List, s1/s2)
-        ListOfConfidence.append(c)
+        if all_conf[i] >= min_c:
+            #c = itemsets_confidence(List, all_conf[i])
+            ListOfConfidence.append(List)
         i+=1 ###### For Test
         
     return ListOfConfidence 
@@ -106,8 +124,8 @@ min_s = 0.30
 min_c = 0.50
 listofsupports = [ 800, 600, 400, 650,350 ]    
 
-ListOfConfidence = Calculate_Confidence(ListOfListOfAttr)
-ListOfRules = Check_Min_Confindence(ListOfConfidence, min_c)
+ListOfRules = Calculate_Confidence(ListOfListOfAttr, min_c)
+#ListOfRules = Check_Min_Confindence(ListOfConfidence, min_c)
 ListOfRules_named = Convert_to_name(ListOfRules)
 for item in ListOfRules_named:
     print(item) 
