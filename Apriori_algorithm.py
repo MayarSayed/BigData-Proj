@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 #imoporting DataSet from eceel sheet
-Data = pd.read_excel (r'C:\Users\Sara\Downloads\bigData/Data.xlsx' , header= None )
+Data = pd.read_excel (r'E:/Mayar kolya/GitHub repos/BigData-Proj/data.xlsx' , header= None )
 
 #Class attr: to save each attribute name and value
 class atrr:
@@ -133,8 +133,8 @@ def main_fn(att_list, min_support):
             old_list = new_list
             att_list,add = item_Set(new_list , level_no)
             if add == True:
-                print(level_no)
-                print('************************')
+                #print(level_no)
+                #print('************************')
                 level_no = level_no +1
             else:
                 return(old_list)    
@@ -143,17 +143,20 @@ def main_fn(att_list, min_support):
 def Calculate_Confidence(ListOfListOfAttr, min_c):
     i = 0
     ListOfConfidence =[]
-    ListOf2attr = []
+    ListOfLHS = []
+    ListOfRHS = []
     length = len(ListOfListOfAttr[0])
     
     for List in ListOfListOfAttr:
         sub = List[:-1]
-        ListOf2attr.append(sub)
-        
+        ListOfLHS.append(sub)
+        ListOfRHS.append(List[-1])
+    
+    #Calculate Support of rules
     ListOfall_s = Calculate_Support(ListOfListOfAttr, length)
-    ListOfsub_s = Calculate_Support(ListOf2attr, length-1)
-    s1List = np.array(ListOfall_s)
-    s2List = np.array(ListOfsub_s)
+    ListOfsub_s = Calculate_Support(ListOfLHS, length-1)
+    s1List = (np.array(ListOfall_s))/5822
+    s2List = (np.array(ListOfsub_s))/5822
     all_conf = s1List/s2List
     
     for List in ListOfListOfAttr:
@@ -161,7 +164,7 @@ def Calculate_Confidence(ListOfListOfAttr, min_c):
             ListOfConfidence.append(List)
         i+=1 ###### For Test
         
-    return ListOfConfidence 
+    return (ListOfLHS ,ListOfRHS, ListOfConfidence)
 ###########################################################################################
 #function Check_Min_Confindence : Returns 
 def Check_Min_Confindence(ListOfListOfAttrWithConf, min_conf): 
@@ -173,25 +176,33 @@ def Check_Min_Confindence(ListOfListOfAttrWithConf, min_conf):
     return ListOfRules
 ###########################################################################################
 #fnction Convert_to_name:Returns each attribute it's Name
-def Convert_to_name (ListOfRules):
-    complete_rule = ''
+def Convert_to_name (ListOfRules): 
+    RHS = ''
+    LHS = ''
     ListOfRules_named = []
     for List in ListOfRules:
         i = 0
         length = len(List)
         for attr in List: 
-            name = Attr_Names[attr.name-9]
-            if i == length - 1: ### RIGHT HAND SIDE OF RULE
-                complete_rule += ' ===> ' + '(' + name + "," + str(attr.value) + ')' 
-                i += 1       
+            name = Attr_Names[attr.name-8]
+            if i == 0: ### LEFT HAND SIDE OF RULE
+                LHS += '(' + name + "_" + str(attr.value) 
+                i += 1
+            elif i == length - 1: ### RIGHT HAND SIDE OF RULE
+                RHS += '(' + name + "_" + str(attr.value) + ')' 
+                i += 1
+            elif i == length - 2: ### LEFT HAND SIDE OF RULE
+                LHS += name + "_" + str(attr.value) + ')'
+                i += 1
             elif i < length- 1: ### LEFT HAND SIDE OF RULE
-                complete_rule += '(' + name + "," + str(attr.value) + ')' 
+                LHS += name + "_" + str(attr.value) 
                 i += 1
             
             if i < length-1 : 
-                complete_rule += ' , '
-        ListOfRules_named.append(complete_rule)
-        complete_rule = ''
+                LHS += ' , '
+        ListOfRules_named.append(complete_rule(LHS,RHS))
+        RHS = ''
+        LHS = ''
     return ListOfRules_named
 ###########################################################################################
 #function Create_rules
@@ -225,27 +236,82 @@ def Create_rules(ListOfListOfAttr):
     return combinations   
 ###########################################################################################
 #function Calculate_Lift
-def Calculate_Lift_levrage(ListOfRules):
-    pass
+def Calculate_Lift (ListOfLHS, ListOfRHS, ListOfRules):
+    length = len(ListOfRules[0])
+    ListOfall_s = Calculate_Support(ListOfRules, length)
+    ListOfsub1_s = Calculate_Support(ListOfLHS, length-1)
+    ListOfsub2_s = Calculate_Support(ListOfRHS, 1)
+    s1List = np.array(ListOfall_s)
+    s1List = s1List/5822
+    s2List = np.array(ListOfsub1_s) ############ LHS Supports List
+    s2List = s2List/5822
+    s3List = np.array(ListOfsub2_s) ############ RHS Supports List
+    s3List = s3List/5822
+    ########### Calculate Lift
+    ListOfLift = []
+    den = s2List * s3List
+    i = 0
+    for item in s1List:
+        Lift = item/den[i]
+        ListOfLift.append(Lift)
+        i += 1
+        
+    return ListOfLift
+###################################################################
+class complete_rule:
+    def __init__(self, LHS,RHS):
+        self.LHS = LHS
+        self.sep = '=>'
+        self.RHS = RHS
+##########################################################################
+def Calculate_Leverage (ListOfLHS, ListOfRHS, ListOfRules):
+    length = len(ListOfRules[0])
+    ListOfall_s = Calculate_Support(ListOfRules, length)
+    ListOfsub1_s = Calculate_Support(ListOfLHS, length-1)
+    ListOfsub2_s = Calculate_Support(ListOfRHS, 1)
+    s1List = np.array(ListOfall_s)
+    s1List = s1List/5822
+    s2List = np.array(ListOfsub1_s) ############ LHS Supports List
+    s2List = s2List/5822
+    s3List = np.array(ListOfsub2_s) ############ RHS Supports List
+    s3List = s3List/5822
 
+    ########### Calculate Leverage
+    ListOfLeverage = []
+    part2 = s2List * s3List
+    i = 0
+    for item in s1List:
+        Leverage = item - part2[i]
+        ListOfLeverage.append(Leverage)
+        i += 1
+        
+    return ListOfLeverage
  ################################################## 
-min_support = float(input("Please, Enter Min support in Farction :  "))
-min_Confidence = float(input("Please, Enter Min Confidence in Farction :  "))
 
+min_s = int(input("Enter min Support (%)"))
+min_c = int(input("Enter min Confidence (%)"))
 attr_values = []
+
 attr_values = Get_atrr_Value()
-print("----------------- Finished Get atributes Values")
-ListOfListOfAttr = main_fn(attr_values, min_support)
-print("----------------- Finished Get Last Level itemsets")
+
+ListOfListOfAttr = main_fn(attr_values, min_s/100)
+
 combinations = Create_rules(ListOfListOfAttr)
-print("----------------- Finished Rules combinations")
-ListOfRules = Calculate_Confidence(combinations, min_Confidence)
-print("----------------- Finished Get min confidence rules")
+
+(ListOfLHS ,ListOfRHS, ListOfRules) = Calculate_Confidence(combinations, min_c/100)
+
+LiftList = Calculate_Lift (ListOfLHS, ListOfRHS, ListOfRules)
+
+LeverageList = Calculate_Leverage (ListOfLHS, ListOfRHS, ListOfRules)
+
 ListOfRules_named = Convert_to_name(ListOfRules)
 
+
+print('{:<40s}{:>4s}{:>15s}{:>15s}{:>15s}'.format("LHS", " " , "RHS" , "Lift" ,"Leverage" ))
+r = 0
 for item in ListOfRules_named:
-    print(item) 
-    
+    print('{:<40s}{:>4s}{:>15s}{:>15.6f}{:>15.6f}'.format(item.LHS, item.sep , item.RHS , LiftList[r],LeverageList[r]))
+    r +=1   
     
     
     
